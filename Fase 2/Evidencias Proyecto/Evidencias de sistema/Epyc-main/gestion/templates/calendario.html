@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario · Panel Entre Platos y Copas</title>
+<link rel="icon" href="{% static 'images/logo.jpg' %}">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}?v=sidebar-design-2">
+<style>
+  /* Calendario estilo Google Calendar */
+  .gcal { --cal-line: #E3E3E3; --cal-muted: #70757A; --c-evento: #3B6E91; --c-entrega: #4F7D52; --c-retiro: #B07A22; }
+  .gcal-toolbar { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .gcal-title { font-size: 1.35rem; font-weight: 400; color: var(--color-black); margin: 0 0.6rem 0 0.4rem; }
+  .gcal-btn { border: 1px solid #DADCE0; background: #fff; border-radius: 999px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 600; color: var(--color-gray-dark); cursor: pointer; }
+  .gcal-btn:hover { background: var(--color-beige-soft); }
+  .gcal-arrow { width: 36px; height: 36px; border-radius: 50%; border: 0; background: transparent; font-size: 1.4rem; line-height: 1; color: var(--color-gray-dark); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+  .gcal-arrow:hover { background: var(--color-gray-light); }
+  .gcal-spacer { flex: 1; }
+  .gcal-legend { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.78rem; color: var(--cal-muted); }
+  .gcal-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .gcal-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .gcal-legend i.is-tentativo { background: repeating-linear-gradient(135deg, #fff 0 2px, #9DB5C6 2px 4px); box-shadow: inset 0 0 0 1px var(--c-evento); }
+  .gcal-views { display: inline-flex; border: 1px solid #DADCE0; border-radius: 999px; overflow: hidden; background: #fff; }
+  .gcal-views button { border: 0; background: transparent; padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 600; color: var(--color-gray-dark); cursor: pointer; }
+  .gcal-views button + button { border-left: 1px solid #DADCE0; }
+  .gcal-views button.is-active { background: #FBE7EA; color: var(--color-accent-dark); }
+
+  .gcal-surface { background: #fff; border: 1px solid var(--cal-line); border-radius: var(--radius-md); overflow: hidden; }
+
+  /* Vista mes */
+  .gcal-month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .gcal-dow { text-align: center; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; color: var(--cal-muted); text-transform: uppercase; padding: 0.55rem 0 0.25rem; border-right: 1px solid var(--cal-line); }
+  .gcal-day { min-height: 118px; border-right: 1px solid var(--cal-line); border-top: 1px solid var(--cal-line); padding: 0.25rem 0.3rem 0.35rem; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .gcal-dow:nth-child(7n), .gcal-day:nth-child(7n) { border-right: 0; }
+  .gcal-day.is-outside { background: #FCFCFC; }
+  .gcal-day.is-outside .gcal-num { color: #B0B4B8; }
+  .gcal-num { align-self: center; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: var(--color-gray-dark); margin-bottom: 2px; border: 0; background: transparent; cursor: pointer; }
+  .gcal-num:hover { background: var(--color-gray-light); }
+  .gcal-day.is-today .gcal-num, .gcal-colhead.is-today .gcal-bignum { background: var(--color-accent); color: #fff; }
+  .gcal-colhead.is-today .dow { color: var(--color-accent); }
+  .gcal-more { font-size: 0.72rem; font-weight: 700; color: var(--color-gray-dark); padding: 1px 6px; border-radius: 4px; text-align: left; border: 0; background: transparent; cursor: pointer; }
+  .gcal-more:hover { background: var(--color-beige-soft); }
+
+  /* Chips de evento */
+  .tipo-evento { --chip: var(--c-evento); --chip-soft: #E3ECF2; }
+  .tipo-entrega { --chip: var(--c-entrega); --chip-soft: #E4EEE4; }
+  .tipo-retiro { --chip: var(--c-retiro); --chip-soft: #F6EBD8; }
+  .gcal-chip { display: block; width: 100%; text-align: left; border: 0; font: inherit; font-size: 0.72rem; line-height: 1.4; padding: 1px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; color: #fff; background: var(--chip); }
+  .gcal-chip:hover { filter: brightness(0.92); }
+  .gcal-chip--timed { background: transparent; color: var(--color-gray-dark); }
+  .gcal-chip--timed::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--chip); margin-right: 5px; }
+  .gcal-chip--timed:hover { background: var(--color-beige-soft); filter: none; }
+  .gcal-chip .t { margin-right: 4px; }
+  .gcal-chip--timed .t { color: var(--cal-muted); }
+  .gcal-chip.is-tentativo, .gcal-timed.is-tentativo { color: var(--chip); background: repeating-linear-gradient(135deg, #fff 0 6px, var(--chip-soft) 6px 12px); box-shadow: inset 0 0 0 1px var(--chip); }
+
+  /* Vistas semana y día */
+  .gcal-week { display: grid; grid-template-columns: 56px repeat(var(--cols), minmax(0, 1fr)); }
+  .gcal-colhead { text-align: center; padding: 0.5rem 0 0.4rem; border-left: 1px solid var(--cal-line); }
+  .gcal-colhead .dow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; color: var(--cal-muted); text-transform: uppercase; }
+  .gcal-bignum { width: 42px; height: 42px; margin: 0.15rem auto 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; color: var(--color-gray-dark); border: 0; background: transparent; cursor: pointer; }
+  .gcal-bignum:hover { background: var(--color-gray-light); }
+  .gcal-allday-label { font-size: 0.62rem; color: var(--cal-muted); text-align: right; padding: 0.4rem 0.45rem 0 0; border-top: 1px solid var(--cal-line); }
+  .gcal-allday { border-left: 1px solid var(--cal-line); border-top: 1px solid var(--cal-line); padding: 3px 3px 5px; display: flex; flex-direction: column; gap: 2px; min-width: 0; min-height: 30px; }
+  /* Misma reserva para la barra de scroll arriba y abajo, así las columnas quedan alineadas. */
+  .gcal-head { overflow-y: hidden; scrollbar-gutter: stable; }
+  .gcal-scroll { max-height: 620px; overflow-y: auto; scrollbar-gutter: stable; border-top: 1px solid var(--cal-line); }
+  .gcal-scroll .gcal-week { grid-template-rows: 1152px; }
+  .gcal-hours { font-size: 0.65rem; color: var(--cal-muted); text-align: right; padding-right: 0.45rem; }
+  .gcal-hours div { height: 48px; transform: translateY(-0.5em); }
+  .gcal-hours div:first-child { visibility: hidden; }
+  .gcal-col { position: relative; border-left: 1px solid var(--cal-line); background: repeating-linear-gradient(to bottom, var(--cal-line) 0 1px, transparent 1px 48px); }
+  .gcal-timed { position: absolute; border: 0; text-align: left; border-radius: 6px; padding: 2px 6px; font: inherit; font-size: 0.72rem; line-height: 1.3; color: #fff; background: var(--chip); overflow: hidden; cursor: pointer; box-shadow: 0 0 0 1px #fff; }
+  .gcal-timed:hover { filter: brightness(0.92); }
+  .gcal-timed strong { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gcal-now { position: absolute; left: -1px; right: 0; height: 2px; background: var(--color-accent); z-index: 2; pointer-events: none; }
+  .gcal-now::before { content: ''; position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--color-accent); }
+
+  /* Ventana de detalle */
+  .gcal-pop { position: fixed; z-index: 1000; width: 360px; max-width: calc(100vw - 24px); background: #fff; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.22); padding: 0.5rem 1.1rem 1.1rem; }
+  .gcal-pop[hidden] { display: none; }
+  .gcal-pop-close { display: block; margin-left: auto; width: 32px; height: 32px; border-radius: 50%; border: 0; background: transparent; font-size: 1rem; cursor: pointer; color: var(--cal-muted); }
+  .gcal-pop-close:hover { background: var(--color-beige-soft); }
+  .gcal-pop-head { display: grid; grid-template-columns: 16px 1fr; gap: 0.8rem; align-items: start; }
+  .gcal-pop-head i { width: 14px; height: 14px; border-radius: 4px; background: var(--chip); margin-top: 0.3rem; }
+  .gcal-pop h3 { font-size: 1.05rem; font-weight: 600; margin: 0; color: var(--color-black); }
+  .gcal-pop .when { font-size: 0.82rem; color: var(--cal-muted); margin-top: 0.2rem; }
+  .gcal-pop dl { display: grid; grid-template-columns: 16px 1fr; gap: 0.4rem 0.8rem; margin: 0.9rem 0 0; font-size: 0.82rem; }
+  .gcal-pop dt { color: var(--cal-muted); display: flex; justify-content: center; padding-top: 1px; }
+  .gcal-pop dd { margin: 0; }
+  .gcal-pop-actions { display: flex; justify-content: flex-end; margin-top: 1rem; }
+
+  @media (max-width: 760px) {
+    .gcal-day { min-height: 84px; }
+    .gcal-chip--timed .t { display: none; }
+    .gcal-legend { order: 10; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="{% url 'index' %}"><img src="{% static 'images/logo2.jpg' %}" alt="Entre Platos y Copas"></a>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{% url 'inicio' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.3"/><rect x="14" y="3" width="7" height="7" rx="1.3"/><rect x="3" y="14" width="7" height="7" rx="1.3"/><rect x="14" y="14" width="7" height="7" rx="1.3"/></svg></span><span class="nav-label">Resumen</span></a>
+
+      <span class="sidebar-group-label">Operación</span>
+      <a href="{% url 'gestion_clientes' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M15.5 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="nav-label">Clientes</span></a>
+      <a href="{% url 'gestion_inventario' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></span><span class="nav-label">Inventario</span><span class="badge-count" id="badge-inventario" hidden>0</span></a>
+      <a href="{% url 'gestion_cotizaciones' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg></span><span class="nav-label">Cotizaciones</span></a>
+      <a href="{% url 'gestion_reservas' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span><span class="nav-label">Reservas</span></a>
+      <a href="{% url 'gestion_preparacion' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h6"/></svg></span><span class="nav-label">Preparación de pedidos</span></a>
+      <a href="{% url 'gestion_despachos' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="13" height="9"/><path d="M15 10h4l3 3v3h-7z"/><circle cx="6.5" cy="18.5" r="1.6"/><circle cx="17.5" cy="18.5" r="1.6"/></svg></span><span class="nav-label">Despachos</span></a>
+      <a href="{% url 'gestion_devoluciones' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 17v-5h5"/></svg></span><span class="nav-label">Devoluciones</span></a>
+      <a href="{% url 'gestion_mermas' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4M12 17h.01"/></svg></span><span class="nav-label">Mermas</span></a>
+      <a href="{% url 'gestion_calendario' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><rect x="7" y="13.3" width="3" height="3" rx="0.5" fill="currentColor" stroke="none"/><rect x="14" y="13.3" width="3" height="3" rx="0.5" fill="currentColor" stroke="none"/></svg></span><span class="nav-label">Calendario</span></a>
+
+      <span class="sidebar-group-label">Análisis</span>
+      <a href="{% url 'gestion_reportes' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></span><span class="nav-label">Reportes</span></a>
+
+      <span class="sidebar-group-label">Sistema</span>
+      <a href="{% url 'gestion_usuarios' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V5l7-3z"/><circle cx="12" cy="10" r="2.2"/><path d="M8.7 16a3.6 3.6 0 0 1 6.6 0"/></svg></span><span class="nav-label">Usuarios</span></a>
+      <a href="{% url 'gestion_configuracion' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="nav-label">Configuración</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="{% url 'index' %}" class="sidebar-link" target="_blank" rel="noopener"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg></span><span class="nav-label">Ver sitio público</span></a>
+      <a href="{% url 'gestion_login' %}" class="sidebar-link"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span><span class="nav-label">Cerrar sesión</span></a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button class="nav-toggle-admin" id="sidebar-toggle" aria-label="Abrir menú">☰</button>
+        <div class="topbar-title">
+          <span class="eyebrow">Operación</span>
+          <h1>Calendario</h1>
+        </div>
+      </div>
+      <div class="topbar-search">
+        <span class="icon">🔍</span>
+        <input type="search" id="global-search" placeholder="Buscar productos, clientes, cotizaciones, reservas...">
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" aria-label="Notificaciones"><span class="dot"></span>🔔</button>
+        <div class="topbar-user">
+          <div class="user-avatar">HC</div>
+          <div class="user-info"><strong>Helen Cortés</strong><span>Administradora</span></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <section class="gcal" id="gcal">
+        <div class="gcal-toolbar">
+          <button type="button" class="gcal-btn" id="cal-hoy">Hoy</button>
+          <button type="button" class="gcal-arrow" id="cal-prev" aria-label="Anterior">‹</button>
+          <button type="button" class="gcal-arrow" id="cal-next" aria-label="Siguiente">›</button>
+          <h2 class="gcal-title" id="cal-titulo" aria-live="polite"></h2>
+          <span class="gcal-spacer"></span>
+          <div class="gcal-legend" aria-label="Leyenda">
+            <span><i style="background:var(--c-evento)"></i>Evento</span>
+            <span><i style="background:var(--c-entrega)"></i>Entrega</span>
+            <span><i style="background:var(--c-retiro)"></i>Retiro</span>
+            <span><i class="is-tentativo"></i>Cotización (sin confirmar)</span>
+          </div>
+          <div class="gcal-views" role="group" aria-label="Vista">
+            <button type="button" data-vista="mes" class="is-active">Mes</button>
+            <button type="button" data-vista="semana">Semana</button>
+            <button type="button" data-vista="dia">Día</button>
+          </div>
+        </div>
+
+        <div class="gcal-surface" id="cal-contenido"></div>
+
+        <div class="gcal-pop" id="cal-pop" role="dialog" hidden></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="{% static 'js/admin-nav.js' %}?v=sidebar-icons-2"></script>
+<script src="{% static 'js/admin-search.js' %}"></script>
+
+<script src="{% static 'js/gestion-django.js' %}?v=2"></script>
+{{ eventos|json_script:"cal-eventos" }}
+<script src="{% static 'js/calendario.js' %}?v=1"></script>
+</body>
+</html>

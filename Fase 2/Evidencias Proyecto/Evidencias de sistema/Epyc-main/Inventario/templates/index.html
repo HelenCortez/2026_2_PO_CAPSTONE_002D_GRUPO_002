@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Entre Platos y Copas · Arriendo para Matrimonios y Eventos{% endblock %}
+
+{% block meta_description %}
+<meta name="description" content="Arriendo de vajilla, cristalería, mobiliario y equipamiento para matrimonios, celebraciones y eventos empresariales. Solicita tu cotización sin compromiso.">
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+  <section class="hero">
+    <div class="container hero-content">
+      <span class="hero-eyebrow">Arriendo para eventos</span>
+      <h1>Entre Platos y Copas</h1>
+      <p class="hero-lead">Todo lo que necesitas para montar tu evento.</p>
+      <p class="hero-sub">Arrendamos vajilla, cristalería, mobiliario y equipamiento para matrimonios, celebraciones y eventos empresariales, con atención cercana en cada detalle.</p>
+      <div class="hero-actions">
+        <a href="{% url 'catalogo' %}" class="btn btn-accent">Ver catálogo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías -->
+  <section class="section" id="categorias">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="eyebrow">Nuestro catálogo</span>
+        <h2>Todo para cada rincón de tu evento</h2>
+        <p>Explora por categoría y arma la selección que mejor se ajuste a tu montaje.</p>
+      </div>
+
+      <div class="category-grid" id="category-grid">
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=vajilla" class="category-card-img">
+            <img src="{% static 'images/loza1.jpg' %}" alt="Vajilla" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Vajilla</h3>
+            <p>Platos y piezas de porcelana para todo tipo de montaje.</p>
+            <a href="{% url 'catalogo' %}?categoria=vajilla" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=cristaleria" class="category-card-img">
+            <img src="{% static 'images/copas1.jpg' %}" alt="Cristalería" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Cristalería</h3>
+            <p>Copas y vasos de cristal para brindis y servicio de bebestibles.</p>
+            <a href="{% url 'catalogo' %}?categoria=cristaleria" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=cubiertos" class="category-card-img">
+            <img src="{% static 'images/cubiertos1.jpg' %}" alt="Cubiertos y servicio" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Cubiertos y servicio</h3>
+            <p>Sets de cubiertos y utensilios de servicio para tu banquete.</p>
+            <a href="{% url 'catalogo' %}?categoria=cubiertos" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=mesas-sillas" class="category-card-img">
+            <img src="{% static 'images/silla1.jpg' %}" alt="Mesas y sillas" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Mesas y sillas</h3>
+            <p>Mobiliario para banquetes, ceremonias y zonas de recepción.</p>
+            <a href="{% url 'catalogo' %}?categoria=mesas-sillas" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=manteleria" class="category-card-img">
+            <img src="{% static 'images/manteleria1.jpg' %}" alt="Mantelería" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Mantelería</h3>
+            <p>Manteles, caminos y servilletas para vestir tus mesas.</p>
+            <a href="{% url 'catalogo' %}?categoria=manteleria" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=carpas-exteriores" class="category-card-img">
+            <img src="{% static 'images/carpa1.jpg' %}" alt="Carpas y exteriores" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Carpas y exteriores</h3>
+            <p>Estructuras y pistas para montajes al aire libre.</p>
+            <a href="{% url 'catalogo' %}?categoria=carpas-exteriores" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=equipamiento" class="category-card-img">
+            <img src="{% static 'images/equipamiento1.jpg' %}" alt="Equipamiento" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Equipamiento</h3>
+            <p>Estufas, iluminación y sonido para complementar tu evento.</p>
+            <a href="{% url 'catalogo' %}?categoria=equipamiento" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+
+        <article class="category-card reveal">
+          <a href="{% url 'catalogo' %}?categoria=decoracion" class="category-card-img">
+            <img src="{% static 'images/deco1.jpg' %}" alt="Decoración" loading="lazy">
+          </a>
+          <div class="category-card-body">
+            <h3>Decoración</h3>
+            <p>Centros de mesa, flores y detalles para ambientar tu evento.</p>
+            <a href="{% url 'catalogo' %}?categoria=decoracion" class="btn btn-ghost btn-sm">Ver productos</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo funciona -->
+  <section class="section section--beige" id="como-funciona">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="eyebrow">Proceso simple</span>
+        <h2>Cómo funciona</h2>
+        <p>De la idea al montaje, te acompañamos en cuatro pasos.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <span class="step-number">1</span>
+          <h3>Cuéntanos sobre tu evento</h3>
+          <p>Completa el cotizador con la fecha, cantidad de invitados y lo que tienes en mente.</p>
+        </div>
+        <div class="step-card reveal">
+          <span class="step-number">2</span>
+          <h3>Recibe tu cotización</h3>
+          <p>Nuestro equipo revisa tu solicitud y te contacta para enviarte una propuesta según tus necesidades y disponibilidad.</p>
+        </div>
+        <div class="step-card reveal">
+          <span class="step-number">3</span>
+          <h3>Confirma tu reserva</h3>
+          <p>Ajustamos productos y cantidades hasta dejar todo listo para tu evento.</p>
+        </div>
+        <div class="step-card reveal">
+          <span class="step-number">4</span>
+          <h3>Coordinamos despacho y retiro</h3>
+          <p>Nos encargamos de la logística el día del evento y el retiro posterior.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cotizador destacado -->
+  <section class="section" style="padding: var(--space-xl) 0;">
+    <div class="container">
+      <div class="quote-banner reveal">
+        <h2>Cotiza tu evento</h2>
+        <p>Cuéntanos qué estás organizando y te ayudaremos a preparar una propuesta según tus necesidades.</p>
+        <a href="{% url 'cotizador' %}" class="btn btn-accent">Cotizar mi evento</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section class="section section--beige">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="eyebrow">Confían en nosotros</span>
+        <h2>Lo que dicen nuestros clientes</h2>
+      </div>
+
+      <div class="testimonial-grid">
+        <article class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"El equipo nos ayudó a definir todo lo que necesitábamos para el matrimonio, incluso cuando no teníamos claro por dónde empezar."</p>
+          <div class="testimonial-author">
+            <img class="testimonial-avatar" src="https://placehold.co/100x100/F3EDE4/333333?font=montserrat&text=MJ" alt="">
+            <div><strong>María José R.</strong><span>Matrimonio en Maipú</span></div>
+          </div>
+        </article>
+        <article class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Excelente atención y puntualidad en la entrega. La vajilla llegó impecable para nuestro evento corporativo."</p>
+          <div class="testimonial-author">
+            <img class="testimonial-avatar" src="https://placehold.co/100x100/E7E5E1/333333?font=montserrat&text=CT" alt="">
+            <div><strong>Carlos T.</strong><span>Evento empresarial</span></div>
+          </div>
+        </article>
+        <article class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Súper flexibles con los cambios de última hora. Todo el proceso de cotización fue simple y rápido."</p>
+          <div class="testimonial-author">
+            <img class="testimonial-avatar" src="https://placehold.co/100x100/F3EDE4/333333?font=montserrat&text=PA" alt="">
+            <div><strong>Paulina A.</strong><span>Cumpleaños familiar</span></div>
+          </div>
+        </article>
+        <article class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"El montaje de la carpa y la pista de baile quedó espectacular. Recomendados 100%."</p>
+          <div class="testimonial-author">
+            <img class="testimonial-avatar" src="https://placehold.co/100x100/E7E5E1/333333?font=montserrat&text=RF" alt="">
+            <div><strong>Rodrigo F.</strong><span>Celebración exterior</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% endblock %}

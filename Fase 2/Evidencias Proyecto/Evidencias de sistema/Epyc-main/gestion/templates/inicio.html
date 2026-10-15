@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumen general · Panel Entre Platos y Copas</title>
+<link rel="icon" href="{% static 'images/logo.jpg' %}">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}?v=sidebar-design-2">
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="{% url 'inicio' %}">
+        <img src="{% static 'images/logo2.jpg' %}" alt="Entre Platos y Copas">
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="{% url 'inicio' %}" class="sidebar-link is-active">
+        <span class="nav-icon">▦</span>
+        <span class="nav-label">Resumen</span>
+      </a>
+
+      <span class="sidebar-group-label">Operación</span>
+
+      <a href="{% url 'gestion_clientes' %}" class="sidebar-link">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Clientes</span>
+      </a>
+
+      <a href="{% url 'gestion_inventario' %}" class="sidebar-link">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Inventario</span>
+      </a>
+
+      <a href="{% url 'gestion_cotizaciones' %}" class="sidebar-link">
+        <span class="nav-icon">📄</span>
+        <span class="nav-label">Cotizaciones</span>
+      </a>
+
+      <a href="{% url 'gestion_reservas' %}" class="sidebar-link">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Reservas</span>
+      </a>
+
+      <a href="{% url 'gestion_preparacion' %}" class="sidebar-link">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Preparación de pedidos</span>
+      </a>
+
+      <a href="{% url 'gestion_despachos' %}" class="sidebar-link">
+        <span class="nav-icon">🚚</span>
+        <span class="nav-label">Despachos</span>
+      </a>
+
+      <a href="{% url 'gestion_devoluciones' %}" class="sidebar-link">
+        <span class="nav-icon">↩</span>
+        <span class="nav-label">Devoluciones</span>
+      </a>
+
+      <a href="{% url 'gestion_mermas' %}" class="sidebar-link">
+        <span class="nav-icon">⚠</span>
+        <span class="nav-label">Mermas</span>
+      </a>
+
+      <a href="{% url 'gestion_calendario' %}" class="sidebar-link">
+        <span class="nav-icon">🗓</span>
+        <span class="nav-label">Calendario</span>
+      </a>
+
+      <span class="sidebar-group-label">Análisis</span>
+
+      <a href="{% url 'gestion_reportes' %}" class="sidebar-link">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Reportes</span>
+      </a>
+
+      <span class="sidebar-group-label">Sistema</span>
+
+      <a href="{% url 'gestion_usuarios' %}" class="sidebar-link">
+        <span class="nav-icon">🛡</span>
+        <span class="nav-label">Usuarios</span>
+      </a>
+
+      <a href="{% url 'gestion_configuracion' %}" class="sidebar-link">
+        <span class="nav-icon">⚙</span>
+        <span class="nav-label">Configuración</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="{% url 'index' %}" class="sidebar-link" target="_blank" rel="noopener">
+        <span class="nav-icon">↗</span>
+        <span class="nav-label">Ver sitio público</span>
+      </a>
+
+      <a href="{% url 'gestion_logout' %}" class="sidebar-link">
+        <span class="nav-icon">⇥</span>
+        <span class="nav-label">Cerrar sesión</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button class="nav-toggle-admin" id="sidebar-toggle" aria-label="Abrir menú">☰</button>
+
+        <div class="topbar-title">
+          <span class="eyebrow">{{ fecha_hoy_texto }}</span>
+          <h1>Resumen general</h1>
+        </div>
+      </div>
+
+      <div class="topbar-search">
+        <span class="icon">🔍</span>
+        <input type="search" id="global-search" placeholder="Buscar productos, clientes, cotizaciones, reservas...">
+      </div>
+
+      <div class="topbar-actions">
+        <div class="topbar-user">
+          <div class="user-avatar">{{ usuario_iniciales|default:"EP" }}</div>
+          <div class="user-info">
+            <strong>{{ usuario_nombre|default:"Entre Platos y Copas" }}</strong>
+            <span>{{ usuario_rol|default:"Administración" }}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-content dashboard-content">
+
+      <div class="dashboard-intro">
+        <div class="dashboard-intro-copy">
+          <h2 class="dashboard-greeting">Hola{% if usuario_nombre %}, {{ usuario_nombre }}{% endif %}</h2>
+          <p class="dashboard-summary">
+            Hoy tienes {{ entregas_hoy }} entrega{{ entregas_hoy|pluralize }},
+            {{ retiros_hoy }} retiro{{ retiros_hoy|pluralize }}
+            y {{ pendientes_preparar }} pedido{{ pendientes_preparar|pluralize }} por preparar.
+          </p>
+        </div>
+        <a href="{% url 'gestion_cotizaciones' %}?nueva=1" class="btn btn-accent btn-sm">
+          + Nueva cotización
+        </a>
+      </div>
+
+      <!-- Indicadores principales: una sola franja en vez de tarjetas sueltas -->
+      <section class="kpi-band" aria-label="Indicadores principales">
+        <a class="kpi-cell" href="{% url 'gestion_reservas' %}">
+          <span class="kpi-label">Reservas activas</span>
+          <span class="kpi-value">{{ reservas_activas }}</span>
+          <span class="kpi-delta">{{ reservas_proximas_7_dias }} en los próximos 7 días</span>
+        </a>
+        <a class="kpi-cell" href="{% url 'gestion_cotizaciones' %}">
+          <span class="kpi-label">Cotizaciones pendientes</span>
+          <span class="kpi-value">{{ cotizaciones_pendientes }}</span>
+          <span class="kpi-delta">{{ cotizaciones_mes }} creadas este mes</span>
+        </a>
+        <a class="kpi-cell" href="{% url 'gestion_cotizaciones' %}">
+          <span class="kpi-label">Monto cotizado del mes</span>
+          <span class="kpi-value">${{ monto_cotizado_mes|floatformat:0 }}</span>
+          <span class="kpi-delta">Total de las cotizaciones del mes</span>
+        </a>
+        <a class="kpi-cell" href="{% url 'gestion_inventario' %}">
+          <span class="kpi-label">Stock disponible</span>
+          <span class="kpi-value">{{ porcentaje_disponible }}%</span>
+          <div class="kpi-meter" role="img" aria-label="{{ porcentaje_disponible }}% del stock disponible">
+            <span style="width: {{ porcentaje_disponible }}%;"></span>
+          </div>
+          <span class="kpi-delta">{{ articulos_disponibles }} de {{ articulos_totales }} unidades</span>
+        </a>
+      </section>
+
+      <div class="dashboard-grid dashboard-grid--wide">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Monto reservado por mes</h2>
+              <p class="card-sub">Reservas confirmadas o realizadas, según el mes del evento</p>
+            </div>
+          </div>
+          <div id="chart-ingresos" class="dashboard-chart"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Productos más arrendados</h2>
+              <p class="card-sub">Unidades en reservas confirmadas o realizadas</p>
+            </div>
+          </div>
+          <div id="chart-productos"></div>
+        </section>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h2>Próximos eventos</h2>
+              <p class="card-sub">Agenda de reservas confirmadas</p>
+            </div>
+            <a href="{% url 'gestion_calendario' %}" class="link">Ver calendario →</a>
+          </div>
+
+          <div class="stack">
+            {% for servicio in proximos_eventos %}
+            <a href="{% url 'gestion_reserva' servicio.id %}" class="list-row agenda-row">
+              <div class="list-row-date">
+                <strong>{{ servicio.fecha_evento|date:"d" }}</strong>
+                <span>{{ servicio.fecha_evento|date:"m/y" }}</span>
+              </div>
+              <div class="list-row-body">
+                <strong>{{ servicio.cliente.nombre }} {{ servicio.cliente.apellido }}</strong>
+                <span>{{ servicio.tipo_servicio|default:"Evento" }} · {{ servicio.comuna_evento|default:"Sin comuna" }}</span>
+              </div>
+              <span class="agenda-code">{{ servicio.codigo }}</span>
+            </a>
+            {% empty %}
+            <p class="empty-state">No hay eventos próximos.</p>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="card dashboard-alerts-card">
+          <div class="card-head">
+            <div>
+              <h2>Alertas de inventario</h2>
+              <p class="card-sub">Productos con 10 o menos unidades disponibles</p>
+            </div>
+            <a href="{% url 'gestion_inventario' %}" class="link">Ver inventario →</a>
+          </div>
+
+          <div class="stack">
+            {% for articulo in alertas_inventario|slice:":4" %}
+            <a href="{% url 'gestion_producto' articulo.id %}" class="list-row">
+              <div>
+                <strong>{{ articulo.nombre }}</strong>
+                <div class="cell-muted">{{ articulo.codigo }} · {{ articulo.categoria.nombre }}</div>
+              </div>
+              <span class="status-pill {% if articulo.stock_trabajable == 0 %}is-danger{% else %}is-warning{% endif %}">
+                {% if articulo.stock_trabajable == 0 %}Sin stock{% else %}{{ articulo.stock_trabajable }} disponibles{% endif %}
+              </span>
+            </a>
+            {% empty %}
+            <p class="empty-state">No hay alertas de inventario.</p>
+            {% endfor %}
+          </div>
+          {% if alertas_inventario_count > 4 %}
+          <p class="card-footnote">Y {{ alertas_inventario_count|add:"-4" }} producto{{ alertas_inventario_count|add:"-4"|pluralize }} más con stock bajo.</p>
+          {% endif %}
+        </section>
+      </div>
+
+      {{ ingresos_mensuales|json_script:"data-ingresos" }}
+      {{ productos_mas_arrendados|json_script:"data-productos" }}
+    </main>
+  </div>
+</div>
+
+<script src="{% static 'js/admin-nav.js' %}?v=sidebar-icons-2"></script>
+<script src="{% static 'js/admin-search.js' %}"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+<script src="{% static 'js/dashboard-django.js' %}?v=2"></script>
+</body>
+</html>

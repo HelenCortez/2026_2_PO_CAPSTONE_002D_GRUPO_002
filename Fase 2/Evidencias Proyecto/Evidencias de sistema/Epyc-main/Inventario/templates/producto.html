@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ producto.nombre }} · Entre Platos y Copas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/catalogo.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: var(--space-lg);">
+<div class="container">
+  <a href="{% url 'catalogo' %}" class="btn btn-ghost btn-sm mb-lg">&larr; Volver al catálogo</a>
+
+  <div class="product-detail">
+    <div class="product-detail-image">
+      <img src="{{ articulo.imagen }}" alt="{{ articulo.nombre }}">
+    </div>
+    <div class="product-detail-info">
+      <span class="eyebrow">{{ articulo.categoria_label|default:articulo.categoria.nombre }}</span>
+      <h1>{{ articulo.nombre }}</h1>
+      {% if articulo.descripcion %}<p>{{ articulo.descripcion }}</p>{% endif %}
+      {% if articulo.descripcion_larga %}<p>{{ articulo.descripcion_larga }}</p>{% endif %}
+      <div class="product-detail-specs">
+        {% if articulo.dimensiones %}<p><strong>Dimensiones:</strong> {{ articulo.dimensiones }}</p>{% endif %}
+        {% if articulo.material %}<p><strong>Material:</strong> {{ articulo.material }}</p>{% endif %}
+        {% if articulo.capacidad %}<p><strong>Capacidad:</strong> {{ articulo.capacidad }}</p>{% endif %}
+        {% if articulo.color %}<p><strong>Color:</strong> {{ articulo.color }}</p>{% endif %}
+        <p><strong>Precio:</strong> ${{ articulo.precio_arriendo|floatformat:0 }} {{ articulo.unidad_precio }}</p>
+      </div>
+      <a href="{% url 'cotizador' %}?articulo={{ articulo.id }}" class="btn btn-primary">Cotizar este artículo</a>
+    </div>
+  </div>
+
+  {% if relacionados %}
+  <div class="related-products">
+    <div class="section-header" style="margin-top: var(--space-2xl);">
+      <span class="eyebrow">También te puede interesar</span>
+      <h2>Productos relacionados</h2>
+    </div>
+    <div class="product-grid">
+      {% for p in relacionados %}
+      <article class="product-card reveal is-visible">
+        <a href="{% url 'producto' p.id %}" class="product-card-img">
+          <span class="product-card-category">{{ p.categoria_label|default:p.categoria.nombre }}</span>
+          <img src="{{ p.imagen }}" alt="{{ p.nombre }}" loading="lazy">
+        </a>
+        <div class="product-card-body">
+          <h3><a href="{% url 'producto' p.id %}">{{ p.nombre }}</a></h3>
+          <p class="product-card-desc">{{ p.descripcion }}</p>
+          <p class="product-card-specs">{{ p.dimensiones|default:"" }}</p>
+          <a class="btn btn-outline btn-sm" href="{% url 'producto' p.id %}">Ver detalle</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+</section>
+{% endblock %}

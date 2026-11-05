@@ -1,3 +1,6 @@
 # Evidencias de sistema
 
-Esta carpeta contiene las evidencias del sistema correspondientes al proyecto CAPSTONE en la Fase 2.
+Aplicación desplegada: https://epyc-in7j.onrender.com
+
+Esta carpeta contiene capturas del flujo de cotización, acceso
+administrativo, confirmación de reservas e inventario.

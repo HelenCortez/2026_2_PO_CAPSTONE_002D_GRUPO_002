@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.2.0, pluggy-1.7.0
+rootdir: C:\Users\hcort\Documents\ChatGPT\CAPSTONE\CAPSTONE\pruebas
+configfile: pytest.ini
+testpaths: tests
+plugins: html-4.2.0, metadata-3.1.1, playwright-0.10.0
+collected 46 items
+
+tests\test_flujo_completo.py .
+tests\test_gestion_acceso.py .........
+tests\test_gestion_modulos.py .................
+tests\test_publico.py ...............
+tests\test_reglas_negocio.py ....
+
+- Generated html report: file:///C:/Users/hcort/Documents/ChatGPT/CAPSTONE/CAPSTONE/pruebas/informe/informe_pruebas.html -
+======================= 46 passed in 478.76s (0:07:58) ========================
